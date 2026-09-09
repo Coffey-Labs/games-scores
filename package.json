@@ -1,0 +1,17 @@
+{
+  "name": "games-scores",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.ts",
+    "dev": "node --watch src/index.ts",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "vitest": "^3.2.7"
+  },
+  "description": "One leaderboard service for every game on games.jcoffey.dev.",
+  "license": "AGPL-3.0-or-later",
+  "author": "John Coffey"
+}
