@@ -79,14 +79,17 @@ accounts has ever been able to offer.
 Every entry in a post is validated before any of them is written: a party that
 half-posts is worse than one that does not post at all.
 
-### The missing-game shim
+### Every request names its game
 
-A request with no `game` is treated as `lemonade`. That is a compatibility
-shim, not a default worth keeping — the deployed lemonade bundle posts no game
-at all, because when it was built there was only one board, and copies of it
-are sitting in people's browsers. It can go once that bundle has been rebuilt
-and redeployed, and not before, or every score set from a cached page lands
-nowhere.
+There is no default. A request that does not say which board it wants is
+refused with the list of boards there are.
+
+There was briefly a shim that read a missing `game` as `lemonade`, because the
+deployed lemonade bundle predated this service and posted no game at all. It
+was removed once that bundle had been rebuilt and was what the site served —
+verified by reading the asset the public URL actually points at, not the one
+the origin holds, because there is a CDN in between and the two are not the
+same claim.
 
 ## The migration
 

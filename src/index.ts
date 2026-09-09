@@ -113,10 +113,10 @@ function readBody(req: IncomingMessage): Promise<string> {
 }
 
 /**
- * Rows go back in the game's own field names, flattened, exactly as its
- * client already expects them. That is not politeness -- the lemonade stand's
- * bundle is sitting in people's browsers right now expecting `assets` and
- * `days`, and it will keep expecting them until it is rebuilt.
+ * Rows go back in the game's own field names, flattened, exactly as its client
+ * expects them. That is the bargain that makes a shared service invisible: a
+ * game asks for its board and gets `assets` and `days`, or `bagged` and
+ * `arrows`, and never has to know it is sharing a table with anybody.
  */
 const shape = (rows: Row[]) =>
   rows.map((r) => ({ id: r.id, name: r.name, at: r.at, ...r.fields }))
@@ -124,14 +124,18 @@ const shape = (rows: Row[]) =>
 /**
  * Which game a request is about.
  *
- * A missing game means lemonade, and that is a compatibility shim rather than
- * a default worth keeping: the deployed lemonade client posts no game at all,
- * because when it was built there was only one board. It can go once that
- * bundle has been rebuilt and redeployed -- and not before, or every score set
- * from a cached page lands nowhere.
+ * There was a shim here that read a missing game as lemonade, because the
+ * deployed lemonade bundle predated this service and posted no game at all.
+ * That bundle has been rebuilt and is what the site serves now -- both games
+ * name themselves on every call -- so the shim has been removed and a request
+ * that does not say which board it wants is refused rather than guessed at.
+ *
+ * Guessing was the right thing while there was something to guess for. It is
+ * the wrong thing now: silently filing an unlabelled score under whichever
+ * game happened to be first is the sort of default that is invisible until it
+ * is wrong, and the caller always knows which game it is.
  */
 function gameFor(explicit: unknown): Game | undefined {
-  if (explicit === undefined || explicit === null || explicit === '') return lookup('lemonade')
   return lookup(explicit)
 }
 
@@ -153,7 +157,7 @@ const server = createServer(async (req, res) => {
 
   if (path === '/api/scores' && req.method === 'GET') {
     const game = gameFor(url.searchParams.get('game') ?? undefined)
-    if (!game) return send(res, 404, { error: 'unknown game' })
+    if (!game) return send(res, 404, { error: `unknown game; try one of: ${known().join(', ')}` })
     return send(res, 200, { game: game.id, scores: shape(store.board(game, BOARD_LIMIT)) })
   }
 
@@ -170,7 +174,7 @@ const server = createServer(async (req, res) => {
 
     const body = (parsed ?? {}) as { game?: unknown; entries?: unknown }
     const game = gameFor(body.game)
-    if (!game) return send(res, 404, { error: 'unknown game' })
+    if (!game) return send(res, 404, { error: `unknown game; try one of: ${known().join(', ')}` })
 
     const list = Array.isArray(parsed) ? parsed : body.entries
     if (!Array.isArray(list)) return send(res, 400, { error: 'expected an array of entries' })
