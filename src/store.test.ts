@@ -15,6 +15,21 @@ describe('the registry', () => {
     expect(lookup('doom')).toBeUndefined()
     expect(lookup(42)).toBeUndefined()
   })
+
+  /**
+   * There is no default game, and there must not be one.
+   *
+   * A shim used to read a missing game as lemonade, for bundles that predated
+   * this service. Now that nothing posts unlabelled, guessing would be worse
+   * than refusing: it would file somebody's score under whichever game
+   * happened to be first, silently, and nobody would find out until the board
+   * looked wrong. These are the shapes a missing game arrives in.
+   */
+  it('refuses to guess when nothing says which board', () => {
+    for (const missing of [undefined, null, '', 0, false, {}, []]) {
+      expect(lookup(missing)).toBeUndefined()
+    }
+  })
 })
 
 /**
