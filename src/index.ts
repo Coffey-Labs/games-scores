@@ -8,6 +8,7 @@ import { BOARD_LIMIT, openStore, type Row } from './store.ts'
 
 // Registering is the import's side effect; the registry is the only index.
 import './games/lemonade.ts'
+import './games/scan.ts'
 import './games/wumpus.ts'
 
 const PORT = Number(process.env.PORT ?? 5184)
