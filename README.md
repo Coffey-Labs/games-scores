@@ -1,5 +1,9 @@
 # games-scores
 
+> [!NOTE]
+> Development happens on [git.coffeylabs.org/jcoffey-dev/games-scores](https://git.coffeylabs.org/jcoffey-dev/games-scores); the copy on GitHub is a read-only mirror.
+> Report issues at **[git.coffeylabs.org/jcoffey-dev/games-scores/issues](https://git.coffeylabs.org/jcoffey-dev/games-scores/issues)**, and join discussions at **[community.coffeylabs.org](https://community.coffeylabs.org)**.
+
 One leaderboard service for every game on [games.jcoffey.dev](https://games.jcoffey.dev).
 
 A single Node process with SQLite, no build step and no native modules:
